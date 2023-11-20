@@ -1,40 +1,27 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:ik_book/login.dart';
+import 'package:ik_book/user/homepage.dart';
 
-void main() => runApp(IKBook());
+Future main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Future.delayed(Duration(seconds: 3));
+  FlutterNativeSplash.remove();
 
-class IKBook extends StatefulWidget {
-  const IKBook({super.key});
-
-  @override
-  State<IKBook> createState() => _IKBookState();
+  runApp(MyApp());
 }
 
-class _IKBookState extends State<IKBook> {
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return new MaterialApp(
-      theme: new ThemeData(primarySwatch: Colors.blue),
-      home: new LoginPage(),
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: "IK Book",
+      home: LoginScreen(),
     );
-  }
-}
-
-class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
-
-  @override
-  State<LoginPage> createState() => _LoginPageState();
-}
-
-class _LoginPageState extends State<LoginPage> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(title: Text("IK Book")),
-        body: Container(
-          color: Colors.purple,
-          width: 100,
-          height: 100,
-        ));
   }
 }
