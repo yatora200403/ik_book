@@ -76,9 +76,13 @@ class _HomePageState extends State<HomePage> {
                   elevation: 4,
                   margin: EdgeInsets.symmetric(vertical: 10),
                   child: ListTile(
+                    leading: Icon(Icons.android),
                     title: Text(
                       _bookFound[index],
-                      style: TextStyle(color: Colors.white),
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold),
                     ),
                   ),
                 ),

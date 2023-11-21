@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:ik_book/user/homepage.dart';
+import 'package:ik_book/user/homepageuser.dart';
+import 'package:ik_book/admin/homepageadmin.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -69,6 +70,12 @@ class _LoginScreenState extends State<LoginScreen> {
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) => HomePage()));
+                          } else if (usernameCtrl.text == 'admin' &&
+                              passwordCtrl.text == '123') {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => HomepageAdmin()));
                           } else {
                             showDialog(
                                 context: context,
