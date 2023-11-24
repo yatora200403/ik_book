@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:ik_book/model/books.dart';
 
@@ -18,34 +20,93 @@ class _BookDetailState extends State<BookDetail> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(10),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Center(
-              child: Image.network(
-                "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.bloomsbury.com%2Fin%2Fdiscover%2Fharry-potter%2Fresources%2Fseries-overview%2F&psig=AOvVaw08RrJ827pL_bazXb8l4PqN&ust=1700615435842000&source=images&cd=vfe&opi=89978449&ved=0CBEQjRxqFwoTCPC_7ar004IDFQAAAAAdAAAAABAE",
-                width: 100,
-                height: 200,
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Center(
+                  child: widget.books.urlImg.toString().startsWith('http') ||
+                          widget.books.urlImg.toString().startsWith('https')
+                      ? Image.network(
+                          widget.books.urlImg,
+                          width: 250,
+                          height: 300,
+                        )
+                      : Image.file(
+                          File(widget.books.urlImg),
+                          width: 250,
+                          height: 300,
+                        )),
+              SizedBox(
+                height: 16,
               ),
-            ),
-            SizedBox(
-              height: 16,
-            ),
-            Center(
-              child: Text(
+              Text(
                 widget.books.title,
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
               ),
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            Card(
-              child: SingleChildScrollView(
-                child: Text("description"),
+              SizedBox(
+                height: 20,
               ),
-            ),
-          ],
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: Column(children: [
+                    Row(
+                      children: [
+                        Text(
+                          "Category : ",
+                          textAlign: TextAlign.left,
+                        ),
+                        Text(
+                          widget.books.category,
+                          textAlign: TextAlign.left,
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Text(
+                          "Position : ",
+                          textAlign: TextAlign.left,
+                        ),
+                        Text(
+                          widget.books.position,
+                          textAlign: TextAlign.left,
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Text(
+                          "Availability : ",
+                          textAlign: TextAlign.left,
+                        ),
+                        Text(
+                          widget.books.availability,
+                          textAlign: TextAlign.left,
+                          style: TextStyle(
+                              color: widget.books.availability == "yes"
+                                  ? Colors.green
+                                  : Colors.red),
+                        ),
+                      ],
+                    ),
+                  ]),
+                ),
+              ),
+              SizedBox(
+                height: 5,
+              ),
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: Text("${widget.books.description} more..."),
+                ),
+              ),
+              ElevatedButton(onPressed: () {}, child: Text("Baca Buku"))
+            ],
+          ),
         ),
       ),
     );
