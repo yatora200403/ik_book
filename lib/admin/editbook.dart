@@ -6,7 +6,8 @@ import 'package:image_picker/image_picker.dart';
 
 class UpdateBook extends StatefulWidget {
   final Books book;
-  const UpdateBook({super.key, required this.book});
+  final String username;
+  const UpdateBook({super.key, required this.book, required this.username});
 
   @override
   State<UpdateBook> createState() => _UpdateBookState();
@@ -189,7 +190,9 @@ class _UpdateBookState extends State<UpdateBook> {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => HomePageAdmin()));
+                                  builder: (context) => HomePageAdmin(
+                                        username: widget.username,
+                                      )));
                         }
                       },
                       child: Text("Update"))

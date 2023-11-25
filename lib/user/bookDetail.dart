@@ -99,9 +99,15 @@ class _BookDetailState extends State<BookDetail> {
                 height: 5,
               ),
               Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(10),
-                  child: Text("${widget.books.description} more..."),
+                child: Container(
+                  width: MediaQuery.of(context).size.width,
+                  child: Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: Text(
+                      "${widget.books.description} more...",
+                      textAlign: TextAlign.left,
+                    ),
+                  ),
                 ),
               ),
               ElevatedButton(onPressed: () {}, child: Text("Baca Buku"))

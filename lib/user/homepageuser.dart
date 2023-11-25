@@ -1,4 +1,4 @@
-import 'dart:convert';
+// import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -6,10 +6,11 @@ import 'package:ik_book/login.dart';
 import 'package:ik_book/user/bookDetail.dart';
 import 'package:ik_book/model/books.dart';
 import 'package:ik_book/network.dart';
-import 'package:http/http.dart' as http;
+// import 'package:http/http.dart' as http;
 
 class HomePageUser extends StatefulWidget {
-  const HomePageUser({super.key});
+  final String username;
+  const HomePageUser({super.key, required this.username});
 
   @override
   State<HomePageUser> createState() => _HomePageUserState();
@@ -21,28 +22,9 @@ class _HomePageUserState extends State<HomePageUser> {
 
   List<dynamic> _foundBook = [];
 
-  Future<List<dynamic>> getAllBooks() async {
-    NetworkApi.setActionApi = "getallbooks";
-    NetworkApi.setFileEnd = "book";
-    final response = await http.get(
-      Uri.parse(NetworkApi.getPostUrl),
-      headers: {'Content-Type': 'application/json; charset=UTF-8'},
-    );
-    List<dynamic> listResponse = [];
-    if (response.statusCode == 200) {
-      listResponse = jsonDecode(response.body);
-    }
-    return listResponse;
-  }
-
   @override
   void initState() {
-    getAllBooks().then((value) {
-      setState(() {
-        NetworkApi.setAllBooksApi = value;
-        _foundBook = NetworkApi.getAllBooks;
-      });
-    });
+    _foundBook = NetworkApi.getAllBooks;
     super.initState();
   }
 
@@ -58,7 +40,9 @@ class _HomePageUserState extends State<HomePageUser> {
             },
             icon: Icon(Icons.menu)),
       ),
-      drawer: MyDrawer(),
+      drawer: MyDrawer(
+        username: widget.username,
+      ),
       body: Padding(
         padding: EdgeInsets.all(10),
         child: Column(children: [
@@ -174,7 +158,8 @@ class _HomePageUserState extends State<HomePageUser> {
 }
 
 class MyDrawer extends StatelessWidget {
-  const MyDrawer({super.key});
+  final String username;
+  const MyDrawer({super.key, required this.username});
 
   @override
   Widget build(BuildContext context) {
@@ -182,15 +167,19 @@ class MyDrawer extends StatelessWidget {
       child: ListView(padding: EdgeInsets.zero, children: [
         DrawerHeader(
           child: Text(
-            "Anggota",
+            username.toUpperCase(),
             style: TextStyle(fontSize: 24, color: Colors.white),
           ),
           decoration: BoxDecoration(color: Colors.blue),
         ),
-        ListTile(
-          title: Text("Logout"),
+        InkWell(
+          child: ListTile(
+            title: Text("Logout"),
+          ),
+          splashColor: Colors.red,
+          highlightColor: Colors.red,
           onTap: () {
-            Navigator.push(context,
+            Navigator.pushReplacement(context,
                 MaterialPageRoute(builder: (context) => LoginScreen()));
           },
         ),

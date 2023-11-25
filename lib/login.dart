@@ -5,7 +5,6 @@ import 'package:ik_book/admin/homepageadmin.dart';
 import 'package:ik_book/network.dart';
 import 'package:ik_book/user/homepageuser.dart';
 import 'package:http/http.dart' as http;
-import 'package:ik_book/session.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -42,10 +41,18 @@ class _LoginScreenState extends State<LoginScreen> {
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
         if (mapResponse['role'] == 'anggota') {
           Navigator.pushReplacement(
-              context, MaterialPageRoute(builder: (context) => HomePageUser()));
+              context,
+              MaterialPageRoute(
+                  builder: (context) => HomePageUser(
+                        username: username,
+                      )));
         } else if (mapResponse['role'] == 'admin') {
-          Navigator.pushReplacement(context,
-              MaterialPageRoute(builder: (context) => HomePageAdmin()));
+          Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => HomePageAdmin(
+                        username: username,
+                      )));
         }
       } else {
         // ignore: use_build_context_synchronously
@@ -72,6 +79,19 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    if (NetworkApi.getAllBooks.isEmpty) {
+      initialization();
+    }
+  }
+
+  Future<void> initialization() async {
+    await NetworkApi.setAllBookApi();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
@@ -79,68 +99,73 @@ class _LoginScreenState extends State<LoginScreen> {
           leading: null,
           automaticallyImplyLeading: false,
         ),
-        body: Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: Form(
-              key: _formKey,
-              child: Column(
-                children: [
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Center(
-                      child: CircleAvatar(
-                    radius: 100,
-                    backgroundImage: AssetImage("assets/150.png"),
-                  )),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  TextFormField(
-                    controller: usernameCtrl,
-                    decoration: InputDecoration(labelText: "Username"),
-                    validator: (value) =>
-                        value!.isEmpty ? "please fill out this form" : null,
-                  ),
-                  TextFormField(
-                    obscureText: _isObscure,
-                    controller: passwordCtrl,
-                    decoration: InputDecoration(
-                        labelText: "Password",
-                        suffixIcon: IconButton(
-                          icon: Icon(_isObscure
-                              ? Icons.visibility_off
-                              : Icons.visibility),
-                          onPressed: () {
-                            setState(() {
-                              _isObscure = !_isObscure;
-                            });
-                          },
-                        )),
-                    validator: (value) =>
-                        value!.isEmpty ? "please fill out this form" : null,
-                  ),
-                  SizedBox(
-                    height: 30,
-                  ),
-                  Container(
-                    width: 200,
-                    height: 50,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        if (_formKey.currentState!.validate()) {
-                          login(usernameCtrl.text.trim(),
-                              passwordCtrl.text.trim());
-                        }
-                      },
-                      child: Text(
-                        "Login",
-                        style: TextStyle(fontSize: 20),
-                      ),
+        body: WillPopScope(
+          onWillPop: () async {
+            return false;
+          },
+          child: Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: 10,
                     ),
-                  )
-                ],
-              )),
+                    Center(
+                        child: CircleAvatar(
+                      radius: 100,
+                      backgroundImage: AssetImage("assets/150.png"),
+                    )),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    TextFormField(
+                      controller: usernameCtrl,
+                      decoration: InputDecoration(labelText: "Username"),
+                      validator: (value) =>
+                          value!.isEmpty ? "please fill out this form" : null,
+                    ),
+                    TextFormField(
+                      obscureText: _isObscure,
+                      controller: passwordCtrl,
+                      decoration: InputDecoration(
+                          labelText: "Password",
+                          suffixIcon: IconButton(
+                            icon: Icon(_isObscure
+                                ? Icons.visibility_off
+                                : Icons.visibility),
+                            onPressed: () {
+                              setState(() {
+                                _isObscure = !_isObscure;
+                              });
+                            },
+                          )),
+                      validator: (value) =>
+                          value!.isEmpty ? "please fill out this form" : null,
+                    ),
+                    SizedBox(
+                      height: 30,
+                    ),
+                    Container(
+                      width: 200,
+                      height: 50,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          if (_formKey.currentState!.validate()) {
+                            login(usernameCtrl.text.trim(),
+                                passwordCtrl.text.trim());
+                          }
+                        },
+                        child: Text(
+                          "Login",
+                          style: TextStyle(fontSize: 20),
+                        ),
+                      ),
+                    )
+                  ],
+                )),
+          ),
         ));
   }
 }

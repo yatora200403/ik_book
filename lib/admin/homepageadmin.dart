@@ -1,4 +1,4 @@
-import 'dart:convert';
+// import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -8,11 +8,11 @@ import 'package:ik_book/login.dart';
 import 'package:ik_book/user/bookDetail.dart';
 import 'package:ik_book/model/books.dart';
 import 'package:ik_book/network.dart';
-import 'package:http/http.dart' as http;
-import 'package:ik_book/session.dart';
+// import 'package:http/http.dart' as http;
 
 class HomePageAdmin extends StatefulWidget {
-  const HomePageAdmin({super.key});
+  final String username;
+  const HomePageAdmin({super.key, required this.username});
 
   @override
   State<HomePageAdmin> createState() => _HomePageAdminState();
@@ -23,20 +23,6 @@ class _HomePageAdminState extends State<HomePageAdmin> {
   final searchCtrl = TextEditingController();
 
   List<dynamic> _foundBook = [];
-
-  Future<List<dynamic>> getAllBooks() async {
-    NetworkApi.setActionApi = "getallbooks";
-    NetworkApi.setFileEnd = "book";
-    final response = await http.get(
-      Uri.parse(NetworkApi.getPostUrl),
-      headers: {'Content-Type': 'application/json; charset=UTF-8'},
-    );
-    List<dynamic> listResponse = [];
-    if (response.statusCode == 200) {
-      listResponse = jsonDecode(response.body);
-    }
-    return listResponse;
-  }
 
   void deleteDialog(BuildContext context, int index) {
     showDialog(
@@ -72,12 +58,7 @@ class _HomePageAdminState extends State<HomePageAdmin> {
 
   @override
   void initState() {
-    getAllBooks().then((value) {
-      setState(() {
-        NetworkApi.setAllBooksApi = value;
-        _foundBook = NetworkApi.getAllBooks;
-      });
-    });
+    _foundBook = NetworkApi.getAllBooks;
     super.initState();
   }
 
@@ -96,13 +77,19 @@ class _HomePageAdminState extends State<HomePageAdmin> {
         actions: [
           IconButton(
               onPressed: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => AddBook()));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => AddBook(
+                              username: widget.username,
+                            )));
               },
               icon: Icon(Icons.add))
         ],
       ),
-      drawer: MyDrawer(),
+      drawer: MyDrawer(
+        username: widget.username,
+      ),
       body: Padding(
         padding: EdgeInsets.all(10),
         child: Column(children: [
@@ -195,6 +182,7 @@ class _HomePageAdminState extends State<HomePageAdmin> {
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) => UpdateBook(
+                                                    username: widget.username,
                                                     book: Books(
                                                         title: _foundBook[index]
                                                             ['judul'],
@@ -288,7 +276,8 @@ class _HomePageAdminState extends State<HomePageAdmin> {
 }
 
 class MyDrawer extends StatelessWidget {
-  const MyDrawer({super.key});
+  final String username;
+  const MyDrawer({super.key, required this.username});
 
   @override
   Widget build(BuildContext context) {
@@ -296,15 +285,19 @@ class MyDrawer extends StatelessWidget {
       child: ListView(padding: EdgeInsets.zero, children: [
         DrawerHeader(
           child: Text(
-            "Admin",
+            username.toUpperCase(),
             style: TextStyle(fontSize: 24, color: Colors.white),
           ),
           decoration: BoxDecoration(color: Colors.blue),
         ),
-        ListTile(
-          title: Text("Logout"),
+        InkWell(
+          child: ListTile(
+            title: Text("Logout"),
+          ),
+          splashColor: Colors.red,
+          highlightColor: Colors.red,
           onTap: () {
-            Navigator.push(context,
+            Navigator.pushReplacement(context,
                 MaterialPageRoute(builder: (context) => LoginScreen()));
           },
         ),

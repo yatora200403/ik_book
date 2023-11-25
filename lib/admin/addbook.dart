@@ -5,7 +5,8 @@ import 'package:ik_book/network.dart';
 import 'package:image_picker/image_picker.dart';
 
 class AddBook extends StatefulWidget {
-  const AddBook({super.key});
+  final String username;
+  const AddBook({super.key, required this.username});
 
   @override
   State<AddBook> createState() => _AddBookState();
@@ -175,7 +176,9 @@ class _AddBookState extends State<AddBook> {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => HomePageAdmin()));
+                                  builder: (context) => HomePageAdmin(
+                                        username: widget.username,
+                                      )));
                         }
                       },
                       child: Text("Submit"))
