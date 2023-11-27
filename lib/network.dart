@@ -5,11 +5,13 @@ class NetworkApi {
   static String? _serverName, _action, _customAction, _fileEnd;
 
   static List<dynamic> _allBooks = [];
-  // static List<dynamic> _localBooks = [];
-  // static List<dynamic> _allBooks = _apiBooks + _localBooks;
 
   static set setServerName(String newName) {
     _serverName = newName;
+  }
+
+  static get getServerName {
+    return _serverName;
   }
 
   static set setActionApi(String action) {
@@ -53,8 +55,6 @@ class NetworkApi {
 
   static void addBook(Map<String, dynamic> book) {
     _allBooks.add(book);
-    // _allBooks.clear();
-    // _allBooks = _apiBooks + _localBooks;
   }
 
   static void editBook(Map<String, dynamic> editedBook) {
@@ -64,23 +64,11 @@ class NetworkApi {
             .toLowerCase()
             .contains(editedBook['id_buku'].toString().toLowerCase()))
         .toList();
-    // List<dynamic> selectedBookLocal = _localBooks
-    //     .where((book) => book['id_buku']
-    //         .toString()
-    //         .toLowerCase()
-    //         .contains(editedBook['id_buku'].toString().toLowerCase()))
-    //     .toList();
 
     if (selectedBookApi != []) {
       int selectedIndex = _allBooks.indexOf(selectedBookApi[0]);
       _allBooks[selectedIndex] = editedBook;
     }
-    // else if (selectedBookLocal != []) {
-    //   int selectedIndex = _localBooks.indexOf(selectedBookLocal[0]);
-    //   _localBooks[selectedIndex] = editedBook;
-    // }
-    // _allBooks.clear();
-    // _allBooks = _apiBooks + _localBooks;
   }
 
   static void deleteBook(int index) {
