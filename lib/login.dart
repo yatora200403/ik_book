@@ -32,6 +32,9 @@ class _LoginScreenState extends State<LoginScreen> {
           'password': password,
         }));
     if (response.statusCode == 200) {
+      if (NetworkApi.getAllBooks.isEmpty) {
+        await NetworkApi.setAllBookApi();
+      }
       mapResponse = jsonDecode(response.body);
       if (mapResponse['status'] == 'success') {
         final snackBar = SnackBar(
@@ -66,29 +69,34 @@ class _LoginScreenState extends State<LoginScreen> {
                 actions: [
                   TextButton(
                       onPressed: () {
-                        Navigator.pop(context);
                         usernameCtrl.clear();
                         passwordCtrl.clear();
+                        Navigator.pop(context);
                       },
                       child: Text("OK"))
                 ],
               );
             });
       }
+    } else {
+      showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Text("Connection Error"),
+              content: Text("Unknown server: ${NetworkApi.getServerName}"),
+              actions: [
+                TextButton(
+                    onPressed: () {
+                      usernameCtrl.clear();
+                      passwordCtrl.clear();
+                      Navigator.pop(context);
+                    },
+                    child: Text("OK"))
+              ],
+            );
+          });
     }
-  }
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    if (NetworkApi.getAllBooks.isEmpty) {
-      initialization();
-    }
-  }
-
-  Future<void> initialization() async {
-    await NetworkApi.setAllBookApi();
   }
 
   @override
@@ -103,68 +111,70 @@ class _LoginScreenState extends State<LoginScreen> {
           onWillPop: () async {
             return false;
           },
-          child: Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: Form(
-                key: _formKey,
-                child: Column(
-                  children: [
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Center(
-                        child: CircleAvatar(
-                      radius: 100,
-                      backgroundImage: AssetImage("assets/150.png"),
-                    )),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    TextFormField(
-                      controller: usernameCtrl,
-                      decoration: InputDecoration(labelText: "Username"),
-                      validator: (value) =>
-                          value!.isEmpty ? "please fill out this form" : null,
-                    ),
-                    TextFormField(
-                      obscureText: _isObscure,
-                      controller: passwordCtrl,
-                      decoration: InputDecoration(
-                          labelText: "Password",
-                          suffixIcon: IconButton(
-                            icon: Icon(_isObscure
-                                ? Icons.visibility_off
-                                : Icons.visibility),
-                            onPressed: () {
-                              setState(() {
-                                _isObscure = !_isObscure;
-                              });
-                            },
-                          )),
-                      validator: (value) =>
-                          value!.isEmpty ? "please fill out this form" : null,
-                    ),
-                    SizedBox(
-                      height: 30,
-                    ),
-                    Container(
-                      width: 200,
-                      height: 50,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          if (_formKey.currentState!.validate()) {
-                            login(usernameCtrl.text.trim(),
-                                passwordCtrl.text.trim());
-                          }
-                        },
-                        child: Text(
-                          "Login",
-                          style: TextStyle(fontSize: 20),
-                        ),
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Form(
+                  key: _formKey,
+                  child: Column(
+                    children: [
+                      SizedBox(
+                        height: 10,
                       ),
-                    )
-                  ],
-                )),
+                      Center(
+                          child: CircleAvatar(
+                        radius: 100,
+                        backgroundImage: AssetImage("assets/150.png"),
+                      )),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      TextFormField(
+                        controller: usernameCtrl,
+                        decoration: InputDecoration(labelText: "Username"),
+                        validator: (value) =>
+                            value!.isEmpty ? "please fill out this form" : null,
+                      ),
+                      TextFormField(
+                        obscureText: _isObscure,
+                        controller: passwordCtrl,
+                        decoration: InputDecoration(
+                            labelText: "Password",
+                            suffixIcon: IconButton(
+                              icon: Icon(_isObscure
+                                  ? Icons.visibility_off
+                                  : Icons.visibility),
+                              onPressed: () {
+                                setState(() {
+                                  _isObscure = !_isObscure;
+                                });
+                              },
+                            )),
+                        validator: (value) =>
+                            value!.isEmpty ? "please fill out this form" : null,
+                      ),
+                      SizedBox(
+                        height: 30,
+                      ),
+                      Container(
+                        width: 200,
+                        height: 50,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            if (_formKey.currentState!.validate()) {
+                              login(usernameCtrl.text.trim(),
+                                  passwordCtrl.text.trim());
+                            }
+                          },
+                          child: Text(
+                            "Login",
+                            style: TextStyle(fontSize: 20),
+                          ),
+                        ),
+                      )
+                    ],
+                  )),
+            ),
           ),
         ));
   }
